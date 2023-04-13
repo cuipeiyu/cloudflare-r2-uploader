@@ -32,8 +32,6 @@ jobs:
     - name: Build
       env:
         CGO_ENABLED: 0
-        GOARCH: amd64
-        GOOS: linux
         GO111MODULE: on
       run: |
         make release

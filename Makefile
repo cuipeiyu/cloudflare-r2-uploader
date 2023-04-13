@@ -11,13 +11,13 @@ release:
 build-unix:
 	mkdir -p dist/$(GOOS)-$(GOARCH)
 	go build -o dist/$(GOOS)-$(GOARCH)/cloudfare-r2-uploader
-	cd dist/$(GOOS)-$(GOARCH) && tar -zvcf ../bridge-$(GOOS)-$(GOARCH).tar.gz cloudfare-r2-uploader
+	cd dist/$(GOOS)-$(GOARCH) && tar -zvcf ../cloudfare-r2-uploader-$(GOOS)-$(GOARCH).tar.gz cloudfare-r2-uploader
 
 # build windows binrary
 build-windows:
 	mkdir -p dist/$(GOOS)-$(GOARCH)
 	go build -o dist/$(GOOS)-$(GOARCH)/cloudfare-r2-uploader.exe
-	cd dist/$(GOOS)-$(GOARCH) && tar -zvcf ../bridge-$(GOOS)-$(GOARCH).tar.gz cloudfare-r2-uploader.exe
+	cd dist/$(GOOS)-$(GOARCH) && tar -zvcf ../cloudfare-r2-uploader-$(GOOS)-$(GOARCH).tar.gz cloudfare-r2-uploader.exe
 
 # show help
 .PHONY: help
