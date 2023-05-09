@@ -71,7 +71,9 @@ func main() {
 	if info.IsDir() {
 		count := 0
 
-		filepath.Walk(localPath, func(path string, info fs.FileInfo, err error) error {
+		localPathAbs, _ := filepath.Abs(localPath)
+
+		filepath.Walk(localPathAbs, func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -86,7 +88,7 @@ func main() {
 			}
 			defer file.Close()
 
-			key := strings.TrimPrefix(path, localPath)
+			key := strings.TrimPrefix(path, localPathAbs)
 			key = strings.TrimPrefix(filepath.Join(remotePath, key), "/")
 			log.Printf("uploading [% 4d] %s", count, key)
 

@@ -1,4 +1,4 @@
-module github.com/cuipeiyu/cloudfare-r2-uploader
+module github.com/cuipeiyu/cloudflare-r2-uploader
 
 go 1.19
 

@@ -1,22 +1,22 @@
-# cloudfare-r2-uploader
+# cloudflare-r2-uploader
 
-A tool to upload files to Cloudfare R2 storage;
+A tool to upload files to cloudflare R2 storage;
 
 
 ## Environment Variables
 
-- `CFR2_BUCKET`: Cloudfare R2 Bucket
-- `CFR2_ACCOUNT_ID`: Cloudfare R2 Account ID
-- `CFR2_ACCESSKEY`: Cloudfare R2 Access Key
-- `CFR2_SECRETKEY`: Cloudfare R2 Secret Key
+- `CFR2_BUCKET`: Cloudflare R2 Bucket
+- `CFR2_ACCOUNT_ID`: Cloudflare R2 Account ID
+- `CFR2_ACCESSKEY`: Cloudflare R2 Access Key
+- `CFR2_SECRETKEY`: Cloudflare R2 Secret Key
 
 
 ## Usage
 
 ```bash
-$ go install github.com/cuipeiyu/cloudfare-r2-uploader@latest
+$ go install github.com/cuipeiyu/cloudflare-r2-uploader@latest
 
-$ cloudfare-r2-uploader local_file remote_file
+$ cloudflare-r2-uploader local_file remote_file
 # or
 $ cloudflare-r2-uploader local_dir remote_dir
 
