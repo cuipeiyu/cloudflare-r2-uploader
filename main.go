@@ -90,6 +90,7 @@ func uploadCmd() *cobra.Command {
 
 			if info.IsDir() {
 				count := 0
+				skipped := 0
 
 				localPathAbs, _ := filepath.Abs(localPath)
 
@@ -102,38 +103,61 @@ func uploadCmd() *cobra.Command {
 						return nil // keep going
 					}
 
-					file, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
-					if err != nil {
-						log.Fatalln(err)
-					}
-					defer file.Close()
-
 					key := strings.TrimPrefix(path, localPathAbs)
 					key = strings.TrimPrefix(filepath.Join(remotePath, key), "/")
-					log.Printf("uploading [% 4d] %s", count, key)
 
-					_, err = client.PutObject(ctx, &s3.PutObjectInput{
-						Bucket: aws.String(bucketName),
-						Key:    aws.String(key),
-						Body:   file,
-					})
-					if err != nil {
-						log.Fatalln(err)
+					skip := !force
+
+					if !force {
+						_, err = client.HeadObject(ctx, &s3.HeadObjectInput{
+							Bucket: aws.String(bucketName),
+							Key:    aws.String(key),
+						})
+						if err != nil {
+							if strings.Contains(err.Error(), "Not Found") {
+								skip = false
+							}
+						}
 					}
 
-					count++
+					if skip {
+						log.Printf("\"%s\" is exists will be skipped", key)
+
+						skipped++
+					} else {
+						log.Printf("uploading [% 4d] %s", count, key)
+
+						file, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
+						if err != nil {
+							log.Fatalln(err)
+						}
+						defer file.Close()
+
+						_, err = client.PutObject(ctx, &s3.PutObjectInput{
+							Bucket: aws.String(bucketName),
+							Key:    aws.String(key),
+							Body:   file,
+						})
+						if err != nil {
+							log.Fatalln(err)
+						}
+
+						count++
+					}
 
 					return nil
 				})
 
-				log.Printf("uploaded %d files", count)
+				log.Printf("uploaded %d files, skipped %d files", count, skipped)
 			} else {
+				key := remotePath
+
 				skip := !force
 
 				if !force {
 					_, err = client.HeadObject(ctx, &s3.HeadObjectInput{
 						Bucket: aws.String(bucketName),
-						Key:    aws.String(remotePath),
+						Key:    aws.String(key),
 					})
 					if err != nil {
 						if strings.Contains(err.Error(), "Not Found") {
@@ -143,7 +167,7 @@ func uploadCmd() *cobra.Command {
 				}
 
 				if skip {
-					log.Printf("\"%s\" is exists will be skipped", remotePath)
+					log.Printf("\"%s\" is exists will be skipped", key)
 				} else {
 					file, err := os.OpenFile(localPath, os.O_RDONLY, os.ModePerm)
 					if err != nil {
@@ -153,7 +177,7 @@ func uploadCmd() *cobra.Command {
 
 					_, err = client.PutObject(ctx, &s3.PutObjectInput{
 						Bucket: aws.String(bucketName),
-						Key:    aws.String(remotePath),
+						Key:    aws.String(key),
 						Body:   file,
 					})
 					if err != nil {
