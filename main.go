@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"mime"
 	"os"
 	"path/filepath"
 	"strings"
@@ -133,10 +134,13 @@ func uploadCmd() *cobra.Command {
 						}
 						defer file.Close()
 
+						mimeType := mime.TypeByExtension(filepath.Ext(localPath))
+
 						_, err = client.PutObject(ctx, &s3.PutObjectInput{
-							Bucket: aws.String(bucketName),
-							Key:    aws.String(key),
-							Body:   file,
+							Bucket:      aws.String(bucketName),
+							Key:         aws.String(key),
+							Body:        file,
+							ContentType: aws.String(mimeType),
 						})
 						if err != nil {
 							log.Fatalln(err)
@@ -175,10 +179,13 @@ func uploadCmd() *cobra.Command {
 					}
 					defer file.Close()
 
+					mimeType := mime.TypeByExtension(filepath.Ext(localPath))
+
 					_, err = client.PutObject(ctx, &s3.PutObjectInput{
-						Bucket: aws.String(bucketName),
-						Key:    aws.String(key),
-						Body:   file,
+						Bucket:      aws.String(bucketName),
+						Key:         aws.String(key),
+						Body:        file,
+						ContentType: aws.String(mimeType),
 					})
 					if err != nil {
 						log.Fatalln(err)
