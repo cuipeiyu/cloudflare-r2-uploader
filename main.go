@@ -126,15 +126,15 @@ func uploadCmd() *cobra.Command {
 
 						skipped++
 					} else {
-						log.Printf("uploading [% 4d] %s", count, key)
+						mimeType := mime.TypeByExtension(filepath.Ext(path))
+
+						log.Printf("uploading [% 4d] %s as %s", count, key, mimeType)
 
 						file, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
 						if err != nil {
 							log.Fatalln(err)
 						}
 						defer file.Close()
-
-						mimeType := mime.TypeByExtension(filepath.Ext(localPath))
 
 						_, err = client.PutObject(ctx, &s3.PutObjectInput{
 							Bucket:      aws.String(bucketName),
@@ -173,13 +173,13 @@ func uploadCmd() *cobra.Command {
 				if skip {
 					log.Printf("\"%s\" is exists will be skipped", key)
 				} else {
+					mimeType := mime.TypeByExtension(filepath.Ext(localPath))
+
 					file, err := os.OpenFile(localPath, os.O_RDONLY, os.ModePerm)
 					if err != nil {
 						log.Fatalln(err)
 					}
 					defer file.Close()
-
-					mimeType := mime.TypeByExtension(filepath.Ext(localPath))
 
 					_, err = client.PutObject(ctx, &s3.PutObjectInput{
 						Bucket:      aws.String(bucketName),
